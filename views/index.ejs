@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Drugi projekt - Security Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    fieldset { margin-bottom: 20px; padding: 10px; border-radius: 6px; }
+    label { display: block; margin: 6px 0; }
+    pre { background:#f4f4f4; padding:10px; border-radius:4px; }
+    .small { font-size:0.9em; color:#555; }
+  </style>
+</head>
+<body>
+  <h1>Drugi projekt — Security demo</h1>
+
+  <!-- SQL Injection -->
+  <fieldset>
+    <legend>SQL ubacivanje (SQL Injection)</legend>
+    <p class="small">Upute: demonstracija tautologije (primjer: <code>' OR '1'='1</code> ).</p>
+    <form action="<%= sqlVulnerable ? '/sql-vuln' : '/sql' %>" method="POST">
+      <label>
+        <input type="checkbox" name="vulnerable" <%= sqlVulnerable ? 'checked' : '' %> />
+        Ranjivost uključena
+      </label>
+      <label>Poruka (username):
+        <input type="text" name="username" required>
+      </label>
+      <button type="submit">Pošalji</button>
+    </form>
+
+    <% if (sqlResult) { %>
+      <h4>Rezultat upita:</h4>
+      <pre><%= typeof sqlResult === 'string' ? sqlResult : JSON.stringify(sqlResult, null, 2) %></pre>
+    <% } %>
+  </fieldset>
+
+  <!-- CSRF -->
+  <fieldset>
+    <legend>Lažiranje zahtjeva na drugom sjedištu (CSRF)</legend>
+    <p class="small">Prebaci u ranjiv način da bi testirao napad s vanjske stranice (attacker.html).</p>
+    <p class="small">Upute: unesi bilo koju akciju i prije nego što šaljes, početnoj adresi dodaj <strong>/attacker.html</strong> i pokreni.</p>
+    <form action="<%= csrfVulnerable ? '/csrf-vuln' : '/csrf' %>" method="POST">
+      <label>
+        <input type="checkbox" name="vulnerable" <%= csrfVulnerable ? 'checked' : '' %> />
+        Ranjivost uključena
+      </label>
+      <label>Akcija:
+        <input type="text" name="action" required>
+      </label>
+
+      <% if (!csrfVulnerable && csrfToken) { %>
+        <!-- prikaz tokena samo u sigurnom režimu -->
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <% } %>
+
+      <button type="submit">Pošalji akciju</button>
+    </form>
+
+    <% if (csrfMessage) { %>
+      <p><strong><%= csrfMessage %></strong></p>
+    <% } %>
+  </fieldset>
+
+  <hr>
+  <p class="small">Napomena: ovo je demo aplikacija s namjernim ranjivostima — koristi samo za učenje.</p>
+</body>
+</html>

